@@ -1,4 +1,5 @@
 #include "matrix.h"
+#include <iostream>
 
 Matrix::Matrix()
 {
@@ -14,7 +15,12 @@ Matrix::Matrix(uint rows, uint cols)
     _data = new double*[_rows];
     for (uint row = 0; row < _rows; row++)
     {
-        _data[_cols] = new double[_cols];
+        _data[row] = new double[_cols];
+
+        for (uint col = 0; col < _cols; col++)
+        {
+            _data[row][col] = 0.0;
+        }
     }
 }
 
@@ -45,6 +51,18 @@ Matrix::~Matrix()
     delete _data;
 }
 
+void Matrix::Print()
+{
+    for (int row = 0; row < _rows; row++)
+    {
+        for (int col = 0; col < _cols; col++)
+        {
+            std::cout << _data[row][col] << " ";
+        }
+        std::cout << std::endl;
+    }
+}
+
 uint Matrix::NumRows() const
 {
     return this->_rows;
@@ -62,7 +80,7 @@ Matrix Matrix::GetRow(uint row) const
         throw MATRIX_ERROR_OUT_OF_BOUNDS;
     }
 
-    Matrix toReturn(1, 0);
+    Matrix toReturn(1, _cols);
 
     for (uint row = 0; row < _rows; row++)
     {
@@ -79,7 +97,7 @@ Matrix Matrix::Matrix::GetCol(uint col) const
         throw MATRIX_ERROR_OUT_OF_BOUNDS;
     }
 
-    Matrix toReturn(0, 1);
+    Matrix toReturn(_rows, 1);
 
     for (uint col = 0; col < _cols; col++)
     {
@@ -103,6 +121,7 @@ void Matrix::Set(double value, uint i, uint j)
 {
     if (i >= _rows || j >= _cols)
     {
+        std::cout << "Out of bounds\n";
         throw MATRIX_ERROR_OUT_OF_BOUNDS;
     }
 
@@ -116,18 +135,92 @@ Matrix Matrix::Add(Matrix left, Matrix right)
         throw MATRIX_ERROR_MISMATCHED_SIZE;
     }
 
-    Matrix toReturn(left);
+    uint rows = left.NumRows();
+    uint cols = left.NumCols();
+    Matrix toReturn(rows, cols);
 
     for (uint i = 0; i < toReturn.NumRows(); i++)
     {
         for (uint j = 0; j < toReturn.NumCols(); j++)
         {
-            double val = toReturn.At(i, j);
-            val += right.At(i, j);
+            double value = left.At(i, j) + right.At(i, j);
 
-            toReturn.Set(val, i, j);
+            toReturn.Set(value, i, j);
         }
     }
 
     return toReturn;
 }
+
+Matrix Matrix::Subtract(Matrix left, Matrix right)
+{
+    if (left.NumRows() != right.NumRows() || left.NumCols() != right.NumCols())
+    {
+        throw MATRIX_ERROR_MISMATCHED_SIZE;
+    }
+
+    uint rows = left.NumRows();
+    uint cols = left.NumCols();
+    Matrix toReturn(rows, cols);
+
+    for (uint i = 0; i < rows; i++)
+    {
+        for (uint j = 0; j < cols; j++)
+        {
+            double value = left.At(i, j) - right.At(i, j);
+
+            toReturn.Set(value, i, j);
+        }
+    }
+
+    return toReturn;
+}
+
+Matrix Matrix::Divide(Matrix matrix, double scalar)
+{
+    uint rows = matrix.NumRows();
+    uint cols = matrix.NumCols();
+    Matrix toReturn(rows, cols);
+
+    for (uint i = 0; i < rows; i++)
+    {
+        for (uint j = 0; j < cols; j++)
+        {
+            double value = matrix.At(i, j) / scalar;
+
+            toReturn.Set(value, i, j);
+        }
+    }
+
+    return toReturn;
+}
+
+Matrix Matrix::Multiply(Matrix matrix, double scalar)
+{
+    uint rows = matrix.NumRows();
+    uint cols = matrix.NumCols();
+    Matrix toReturn(rows, cols);
+
+    for (uint i = 0; i < rows; i++)
+    {
+        for (uint j = 0; j < cols; j++)
+        {
+            double value = matrix.At(i, j) * scalar;
+
+            toReturn.Set(value, i, j);
+        }
+    }
+
+    return toReturn;
+}
+
+double* Matrix::operator [](const uint i)
+{
+    if (i >= _rows)
+    {
+        throw MATRIX_ERROR_OUT_OF_BOUNDS;
+    }
+
+    return _data[i];
+}
+

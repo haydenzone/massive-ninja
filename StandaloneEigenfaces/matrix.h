@@ -18,14 +18,21 @@ public:
 
     ~Matrix();
 
+    void Print();
+
     uint NumRows() const;
     uint NumCols() const;
 
     Matrix GetRow(uint row) const;
     Matrix GetCol(uint col) const;
     double At(uint i, uint j) const;
-
     void Set(double value, uint i, uint j);
+
+
+    Matrix operator+(const Matrix& other);
+    Matrix operator-(const Matrix& other);
+    Matrix operator/(uint scalar);
+    double* operator[](const uint i);
 
     static Matrix Add(Matrix left, Matrix right);
     static Matrix Subtract(Matrix left, Matrix right);
