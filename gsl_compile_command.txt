@@ -1,0 +1,1 @@
+g++ gsl_test.cpp -lgsl -o gsl_test
