@@ -214,6 +214,52 @@ Matrix Matrix::Multiply(Matrix matrix, double scalar)
     return toReturn;
 }
 
+Matrix Matrix::Multiply(Matrix left, Matrix right)
+{
+    if (left.NumCols() != right.NumRows())
+    {
+        std::cout << "Mismatched dimensions\n";
+        throw MATRIX_ERROR_MISMATCHED_SIZE;
+    }
+
+    Matrix toReturn(left.NumRows(), right.NumCols());
+    uint m = left.NumCols();
+
+    for (uint i = 0; i < toReturn.NumRows(); i++)
+    {
+        for (uint j = 0; j < toReturn.NumCols(); j++)
+        {
+            uint value = 0;
+            for (uint k = 0; k < m; k++)
+            {
+                value += left.At(i, k) * right.At(k, j);
+            }
+
+            toReturn.Set(value, i, j);
+        }
+    }
+
+    return toReturn;
+}
+
+Matrix Matrix::Transpose(Matrix matrix)
+{
+    uint rows = matrix.NumCols();
+    uint cols = matrix.NumRows();
+
+    Matrix toReturn(rows, cols);
+
+    for (uint i = 0; i < rows; i++)
+    {
+        for (uint j = 0; j < cols; j++)
+        {
+            toReturn.Set(matrix.At(j, i), i, j);
+        }
+    }
+
+    return toReturn;
+}
+
 double* Matrix::operator [](const uint i)
 {
     if (i >= _rows)
