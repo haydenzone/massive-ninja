@@ -79,6 +79,32 @@ int main(int argc, char *argv[])
         //std::cout << "Number " << vect[i] << "\n";
     //}
 
+    //hayden's test code
+    std::cout << "Hayden's tests" << std::endl;
+    double data[3][3] = { {1.0, 2.0, 1.0},
+          {6.0, -1.0, 0.0},
+          {-1.0, -2.0, -1.0 }};
+
+    Matrix mytest(3,3);
+    Matrix eig_vals(3,1);
+    Matrix eig_vecs(3,3);
+    for(int i = 0; i < 3; i++)
+    {
+        for(int j = 0; j < 3; j++)
+        {
+            mytest.Set(data[i][j], i, j);
+        }
+    }
+    mytest.Print();
+    mytest.eigen(eig_vecs, eig_vals);
+    mytest.Print();
+    std::cout << "Eigenvals" << std::endl;
+    eig_vals.Print();
+    std::cout << "Eigenvecs" << std::endl;
+    eig_vecs.Print();
+
+    //end hayden's test code
+
     return a.exec();
 }
 
