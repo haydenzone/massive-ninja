@@ -83,9 +83,9 @@ Matrix Matrix::GetRow(uint row) const
 
     Matrix toReturn(1, _cols);
 
-    for (uint row = 0; row < _rows; row++)
+    for (uint col = 0; col < _cols; col++)
     {
-        toReturn.Set(_data[row][0], row, 0);
+        toReturn.Set(_data[row][col], 0, col);
     }
 
     return toReturn;
@@ -100,9 +100,9 @@ Matrix Matrix::Matrix::GetCol(uint col) const
 
     Matrix toReturn(_rows, 1);
 
-    for (uint col = 0; col < _cols; col++)
+    for (uint row = 0; row < _rows; row++)
     {
-        toReturn.Set(_data[0][col], 0, col);
+        toReturn.Set(_data[row][col], row, 0);
     }
 
     return toReturn;
@@ -308,10 +308,16 @@ void Matrix::Normalize()
 }
 
 
-void Matrix::SetColumn(Matrix column)
+void Matrix::SetColumn(Matrix &column, uint col)
 {
     if (column.NumCols() != 1)
         throw MATRIX_ERROR_MISMATCHED_SIZE;
+    uint rows = column.NumRows();
+    for (uint i = 0; i < rows; i++)
+    {
+        double val = column[0][i];
+        this->Set(val, i, col);
+    }
 }
 
 void Matrix::eigen(Matrix & eigen_vectors, Matrix & eigen_values)

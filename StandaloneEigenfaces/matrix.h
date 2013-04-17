@@ -29,7 +29,7 @@ public:
     double At(uint i, uint j) const;
 
     void Set(double value, uint i, uint j);
-    void SetColumn(Matrix column);
+    void SetColumn(Matrix& column, uint col);
     void Normalize();
 
     Matrix operator+(const Matrix& other);
