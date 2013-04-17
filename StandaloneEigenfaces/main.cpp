@@ -39,10 +39,33 @@ int main(int argc, char *argv[])
     test.Print();
     std::cout << "Done printing result\n";
 
+
+    std::cout << "Printing row\n";
+    Matrix row = test.GetRow(1);
+    row.Print();
+
+    std::cout << "Printing col\n";
+    Matrix col = test.GetCol(1);
+    col.Print();
+
+    std::cout << "Printing transpose\n";
+
     Matrix test_transpose = Matrix::Transpose(test);
     test_transpose.Print();
 
+    std::cout << "Printing Normalized transpose\n";
+
     test_transpose.Normalize();
+    test_transpose.Print();
+
+    Matrix columnMatrix(7, 1);
+    for (uint i = 0; i < 7; i++)
+    {
+        columnMatrix.Set(1, i, 0);
+    }
+
+    std::cout << "Printing normalized transpose set column\n";
+    test_transpose.SetColumn(columnMatrix, 0);
     test_transpose.Print();
 
     //double *vect = test_transpose.ToVector();
