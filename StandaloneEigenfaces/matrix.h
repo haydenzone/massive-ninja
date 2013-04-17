@@ -1,6 +1,8 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
+#include <qtimagelib.h>
+
 typedef unsigned int uint;
 
 enum MATRIX_ERROR
@@ -15,6 +17,7 @@ public:
     Matrix();
     Matrix(uint rows, uint cols);
     Matrix(const Matrix &toCopy);
+    Matrix(Image &image);
 
     ~Matrix();
 

@@ -10,6 +10,7 @@ TARGET = StandaloneEigenfaces
 TEMPLATE = app
 LIBS += -lgsl
 INCLUDEPATH += /usr/include/gsl/
+CONFIG += qtimagelib
 
 SOURCES += main.cpp\
         mainwindow.cpp \
