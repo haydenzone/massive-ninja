@@ -105,6 +105,10 @@ int main(int argc, char *argv[])
 
     //end hayden's test code
 
+
+    QImage image("/home/student/1900263/Pictures/cagef.png");
+    w.SetImage(image);
+
     return a.exec();
 }
 

@@ -259,6 +259,8 @@ Matrix Matrix::Multiply(Matrix left, Matrix right)
         throw MATRIX_ERROR_MISMATCHED_SIZE;
     }
 
+
+
     Matrix toReturn(left.NumRows(), right.NumCols());
     uint m = left.NumCols();
 
