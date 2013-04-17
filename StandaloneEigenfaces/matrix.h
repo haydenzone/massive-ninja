@@ -32,6 +32,7 @@ public:
     Matrix operator+(const Matrix& other);
     Matrix operator-(const Matrix& other);
     Matrix operator/(uint scalar);
+    Matrix operator*(uint scalar);
     double* operator[](const uint i);
 
     static Matrix Add(Matrix left, Matrix right);

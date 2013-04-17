@@ -9,19 +9,37 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.show();
 
-    Matrix test(3, 3);
+    Matrix left(3, 5);
 
     for (int i = 0; i < 3; i++)
     {
-        for (int j = 0; j < 3; j++)
+        for (int j = 0; j < 5; j++)
         {
-            test.Set(i*j, i, j);
+            left.Set(i*j, i, j);
         }
     }
 
-    test = Matrix::Multiply(test, 5.0);
+    Matrix right(5, 7);
+    for (int i = 0; i < 5; i++)
+    {
+        for (int j = 0; j < 7; j++)
+        {
+            right.Set(j*i, i, j);
+        }
+    }
 
+    Matrix test = Matrix::Multiply(left, right);
+
+    left.Print();
+    std::cout << "Done printing left\n";
+    right.Print();
+    std::cout << "Done printing right\n";
     test.Print();
+    std::cout << "Done printing result\n";
+
+    Matrix test_transpose = Matrix::Transpose(test);
+    test_transpose.Print();
+
     
     return a.exec();
 }
