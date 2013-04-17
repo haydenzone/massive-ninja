@@ -48,8 +48,22 @@ Matrix::Matrix(const Matrix &toCopy)
 
 Matrix::Matrix(Image &image)
 {
-    this->_rows = image.Height();
-    this->_cols = image.Width();
+    _rows = image.Height();
+    _cols = image.Width();
+
+    _data1D = new double[_rows * _cols];
+    _data = new double*[_rows];
+
+    for (uint i = 0; i  < _rows; i++)
+    {
+        _data[i] = (_data1D + (i * _cols));
+        for (uint j = 0; j < _cols; j++)
+        {
+            Pixel pix = image[i][j];
+            uint val = (pix.Blue() + pix.Red() + pix.Green()) / 3.0;
+            _data[i][j] = val;
+        }
+    }
 }
 
 Matrix::~Matrix()
@@ -58,11 +72,27 @@ Matrix::~Matrix()
     delete _data;
 }
 
+Image Matrix::ToImage()
+{
+    Image toReturn = Image(_rows, _cols);
+
+    for (uint i = 0; i < _rows; i++)
+    {
+        for (uint j = 0; j < _cols; j++)
+        {
+            uint val = this->At(i, j);
+            toReturn[i][j].SetGray(val);
+        }
+    }
+
+    return toReturn;
+}
+
 void Matrix::Print()
 {
-    for (int row = 0; row < _rows; row++)
+    for (uint row = 0; row < _rows; row++)
     {
-        for (int col = 0; col < _cols; col++)
+        for (uint col = 0; col < _cols; col++)
         {
             std::cout << _data[row][col] << " ";
         }
@@ -340,7 +370,7 @@ void Matrix::eigen(Matrix & eigen_vectors, Matrix & eigen_values)
     }
 
     double * temp_data = new double[_rows*_rows];
-    for( int i = 0; i < _rows*_rows; i++)
+    for( uint i = 0; i < _rows*_rows; i++)
     {
         temp_data[i] = _data[0][i];
     }
@@ -361,7 +391,7 @@ void Matrix::eigen(Matrix & eigen_vectors, Matrix & eigen_values)
          GSL_EIGEN_SORT_ABS_DESC);
 
    {
-      int i, j;
+      uint i, j;
 
       for (i = 0; i < _rows; i++)
       {

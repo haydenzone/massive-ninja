@@ -34,6 +34,7 @@ public:
     void Set(double value, uint i, uint j);
     void SetColumn(Matrix& column, uint col);
     void Normalize();
+    Image ToImage();
 
     Matrix operator+(const Matrix& other);
     Matrix operator-(const Matrix& other);
