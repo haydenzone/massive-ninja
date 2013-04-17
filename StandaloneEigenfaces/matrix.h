@@ -25,9 +25,12 @@ public:
 
     Matrix GetRow(uint row) const;
     Matrix GetCol(uint col) const;
+    double* ToVector() const;
     double At(uint i, uint j) const;
-    void Set(double value, uint i, uint j);
 
+    void Set(double value, uint i, uint j);
+    void SetColumn(Matrix column);
+    void Normalize();
 
     Matrix operator+(const Matrix& other);
     Matrix operator-(const Matrix& other);
@@ -46,6 +49,7 @@ private:
     uint _rows;
     uint _cols;
     double** _data;
+    double* _data1D;
 };
 
 #endif // MATRIX_H

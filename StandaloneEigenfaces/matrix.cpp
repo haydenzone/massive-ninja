@@ -1,5 +1,6 @@
 #include "matrix.h"
 #include <iostream>
+#include <math.h>
 
 Matrix::Matrix()
 {
@@ -12,10 +13,11 @@ Matrix::Matrix(uint rows, uint cols)
     _rows = rows;
     _cols = cols;
 
+    _data1D = new double[_rows * _cols];
     _data = new double*[_rows];
     for (uint row = 0; row < _rows; row++)
     {
-        _data[row] = new double[_cols];
+        _data[row] = (_data1D + (row * _cols));  //new double[_cols];
 
         for (uint col = 0; col < _cols; col++)
         {
@@ -29,11 +31,12 @@ Matrix::Matrix(const Matrix &toCopy)
     this->_rows = toCopy.NumRows();
     this->_cols = toCopy.NumCols();
 
+    _data1D = new double[_rows * _cols];
     _data = new double*[_rows];
 
     for (uint row = 0; row < _rows; row++)
     {
-        _data[row] = new double[_cols];
+        _data[row] = (_data1D + (row * _cols));
         for (uint col = 0; col < _cols; col++)
         {
             _data[row][col] = toCopy.At(row, col);
@@ -43,11 +46,7 @@ Matrix::Matrix(const Matrix &toCopy)
 
 Matrix::~Matrix()
 {
-    for (uint i = 0; i < _rows; i++)
-    {
-        delete _data[i];
-    }
-
+    delete _data1D;
     delete _data;
 }
 
@@ -270,3 +269,48 @@ double* Matrix::operator [](const uint i)
     return _data[i];
 }
 
+double* Matrix::ToVector() const
+{
+    uint totalSize = _rows * _cols;
+    double* toReturn = new double[totalSize];
+
+    for (uint i = 0; i < totalSize; i++)
+    {
+        toReturn[i] = this->At((uint)floor(i / _rows), i % _cols );
+    }
+
+    return toReturn;
+}
+
+void Matrix::Normalize()
+{
+    double maxVal = 0.0;
+    for (uint i = 0; i < _rows; i++)
+    {
+        for (uint j = 0; j < _cols; j++)
+        {
+            double temp = this->At(i, j);
+            if (temp > maxVal)
+                maxVal = temp;
+        }
+    }
+
+    for (uint i = 0; i < _rows; i++)
+    {
+        for (uint j = 0; j < _cols; j++)
+        {
+            double temp = this->At(i, j);
+            this->Set(temp / maxVal, i, j);
+        }
+    }
+}
+
+
+void Matrix::SetColumn(Matrix column)
+{
+    if (column.NumCols() != 1)
+        throw MATRIX_ERROR_MISMATCHED_SIZE;
+
+
+
+}
