@@ -46,6 +46,12 @@ Matrix::Matrix(const Matrix &toCopy)
     }
 }
 
+Matrix::Matrix(Image &image)
+{
+    this->_rows = image.Height();
+    this->_cols = image.Width();
+}
+
 Matrix::~Matrix()
 {
     delete _data1D;
