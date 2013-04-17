@@ -44,6 +44,7 @@ public:
     static Matrix Multiply(Matrix left, Matrix right);
     static Matrix Multiply(Matrix matrix, double scalar);
     static Matrix Transpose(Matrix matrix);
+    void eigen(Matrix & eigen_vectors, Matrix & eigen_values);
 
 private:
     uint _rows;

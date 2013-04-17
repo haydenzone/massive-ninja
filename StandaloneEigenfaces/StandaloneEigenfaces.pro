@@ -8,7 +8,8 @@ QT       += core gui
 
 TARGET = StandaloneEigenfaces
 TEMPLATE = app
-
+LIBS += -lgsl
+INCLUDEPATH += /usr/include/gsl/
 
 SOURCES += main.cpp\
         mainwindow.cpp \
