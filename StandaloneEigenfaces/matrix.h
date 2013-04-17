@@ -49,6 +49,7 @@ private:
     uint _rows;
     uint _cols;
     double** _data;
+    double* _data1D;
 };
 
 #endif // MATRIX_H

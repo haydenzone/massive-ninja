@@ -9,6 +9,8 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.show();
 
+    Matrix blank(10, 15);
+
     Matrix left(3, 5);
 
     for (int i = 0; i < 3; i++)
