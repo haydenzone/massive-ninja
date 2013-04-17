@@ -1,5 +1,6 @@
 #include "matrix.h"
 #include <iostream>
+#include <math.h>
 
 Matrix::Matrix()
 {
@@ -268,5 +269,41 @@ double* Matrix::operator [](const uint i)
     }
 
     return _data[i];
+}
+
+double* Matrix::ToVector() const
+{
+    uint totalSize = _rows * _cols;
+    double* toReturn = new double[totalSize];
+
+    for (uint i = 0; i < totalSize; i++)
+    {
+        toReturn[i] = this->At((uint)floor(i / _rows), i % _cols );
+    }
+
+    return toReturn;
+}
+
+void Matrix::Normalize()
+{
+    double maxVal = 0.0;
+    for (uint i = 0; i < _rows; i++)
+    {
+        for (uint j = 0; j < _cols; j++)
+        {
+            double temp = this->At(i, j);
+            if (temp > maxVal)
+                maxVal = temp;
+        }
+    }
+
+    for (uint i = 0; i < _rows; i++)
+    {
+        for (uint j = 0; j < _cols; j++)
+        {
+            double temp = this->At(i, j);
+            this->Set(temp / maxVal, i, j);
+        }
+    }
 }
 

@@ -40,6 +40,20 @@ int main(int argc, char *argv[])
     Matrix test_transpose = Matrix::Transpose(test);
     test_transpose.Print();
 
-    
+    test_transpose.Normalize();
+    test_transpose.Print();
+
+    //double *vect = test_transpose.ToVector();
+
+    //uint size = test_transpose.NumCols() * test_transpose.NumRows();
+
+    //std::cout << "Test vect\n";
+
+    //for (uint i = 0; i < size; i++)
+    //{
+        //std::cout << "Number " << vect[i] << "\n";
+    //}
+
     return a.exec();
 }
+
