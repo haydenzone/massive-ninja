@@ -17,7 +17,7 @@ public:
     Matrix();
     Matrix(uint rows, uint cols);
     Matrix(const Matrix &toCopy);
-    Matrix(Image &image);
+    void SetFrom(Image &image);
 
     ~Matrix();
 
@@ -34,12 +34,13 @@ public:
     void Set(double value, uint i, uint j);
     void SetColumn(Matrix& column, uint col);
     void Normalize();
-    Image ToImage();
+    Image ToImage(int height, int width);
 
     Matrix operator+(const Matrix& other);
     Matrix operator-(const Matrix& other);
     Matrix operator/(uint scalar);
     Matrix operator*(uint scalar);
+    Matrix operator=(const Matrix& toCopy);
     double* operator[](const uint i);
 
     static Matrix Add(Matrix left, Matrix right);

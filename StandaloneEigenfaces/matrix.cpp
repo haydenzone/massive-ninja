@@ -7,7 +7,8 @@
 Matrix::Matrix()
 {
     _rows = _cols = 0;
-    _data = 0;
+    _data = NULL;
+    _data1D = NULL;
 }
 
 Matrix::Matrix(uint rows, uint cols)
@@ -30,8 +31,8 @@ Matrix::Matrix(uint rows, uint cols)
 
 Matrix::Matrix(const Matrix &toCopy)
 {
-    this->_rows = toCopy.NumRows();
-    this->_cols = toCopy.NumCols();
+    _rows = toCopy.NumRows();
+    _cols = toCopy.NumCols();
 
     _data1D = new double[_rows * _cols];
     _data = new double*[_rows];
@@ -46,41 +47,76 @@ Matrix::Matrix(const Matrix &toCopy)
     }
 }
 
-Matrix::Matrix(Image &image)
+void Matrix::SetFrom(Image &image)
 {
-    _rows = image.Height();
-    _cols = image.Width();
+   //Clear allocated memory 
+   if(_rows != image.Height()*image.Width() && _cols != 1)
+   {
+      std::cout << "Matrix: incorrect matrix dimensions" << std::endl;
+      return;
+   }
+
+/*
+    _rows = image.Height() *image.Width();
+    _cols = 1;
 
     _data1D = new double[_rows * _cols];
     _data = new double*[_rows];
+    */
 
-    for (uint i = 0; i  < _rows; i++)
+    for (uint i = 0; i  < image.Height(); i++)
     {
-        _data[i] = (_data1D + (i * _cols));
-        for (uint j = 0; j < _cols; j++)
+        for (uint j = 0; j < image.Width(); j++)
         {
+            _data[i*image.Width() + j] = _data1D + i*image.Width() + j;
             Pixel pix = image[i][j];
             uint val = (pix.Blue() + pix.Red() + pix.Green()) / 3.0;
-            _data[i][j] = val;
+            this->Set(val,i*image.Width()+j,0);
         }
     }
 }
 
 Matrix::~Matrix()
 {
-    delete _data1D;
-    delete _data;
+    for(int i = 0; i < _rows; i++)
+    {
+        _data[i] = NULL;
+    }
+
+    if (_data1D != NULL)
+    {
+        delete[] _data1D;
+        _data1D = NULL;
+    }
+
+
+    if (_data != NULL)
+    {
+        delete[] _data;
+        _data = NULL;
+    }
+
 }
 
-Image Matrix::ToImage()
+Image Matrix::ToImage(int height, int width)
 {
-    Image toReturn = Image(_rows, _cols);
+    Image toReturn = Image(height, width);
+   if(_cols != 1)
+   {
+      std::cout << "Matrix::ToImage: matrix must be a 1-d col vector" << std::endl;
+      return toReturn;
+   }
+   if(height*width != _rows)
+   {
+      std::cout << "Matrix::ToImage: image dimensions not valid" << std::endl;
+      return toReturn;
+   }
 
-    for (uint i = 0; i < _rows; i++)
+    for (uint i = 0; i < height; i++)
     {
-        for (uint j = 0; j < _cols; j++)
+        for (uint j = 0; j < width; j++)
         {
-            uint val = this->At(i, j);
+            uint val = this->At(i*width + j, 0);
             toReturn[i][j].SetGray(val);
         }
     }
@@ -307,6 +343,11 @@ double* Matrix::operator [](const uint i)
     }
 
     return _data[i];
+}
+
+Matrix Matrix::operator =(const Matrix& toCopy)
+{
+    return Matrix(toCopy);
 }
 
 double* Matrix::ToVector() const
