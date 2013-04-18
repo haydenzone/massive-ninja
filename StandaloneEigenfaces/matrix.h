@@ -34,16 +34,22 @@ public:
     void Set(double value, uint i, uint j);
     void SetColumn(Matrix& column, uint col);
     void Normalize();
+    double Magnitude();
+    void Scale();
     Image ToImage(int height, int width);
 
     Matrix operator+(const Matrix& other);
     Matrix operator-(const Matrix& other);
-    Matrix operator/(uint scalar);
+    Matrix operator/(double scalar);
     Matrix operator*(uint scalar);
     Matrix operator=(const Matrix& toCopy);
     double* operator[](const uint i);
 
     static Matrix Add(Matrix left, Matrix right);
+    void Add(Matrix & toAdd);
+    void Subtract(Matrix & toSub);
+    void Divide(double scalar);
+    void Multiply(double scalar);
     static Matrix Subtract(Matrix left, Matrix right);
     static Matrix Divide(Matrix matrix, double scalar);
     static Matrix Multiply(Matrix left, Matrix right);

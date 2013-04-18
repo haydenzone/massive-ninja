@@ -221,10 +221,67 @@ Matrix Matrix::Add(Matrix left, Matrix right)
             toReturn.Set(value, i, j);
         }
     }
-
     return toReturn;
 }
+void Matrix::Add(Matrix & toAdd)
+{
+    if (this->NumRows() != toAdd.NumRows() || this->NumCols() != toAdd.NumCols())
+    {
+        throw MATRIX_ERROR_MISMATCHED_SIZE;
+    }
+     uint rows = this->NumRows();
+    uint cols = this->NumCols();
 
+    for (uint i = 0; i < rows; i++)
+    {
+        for (uint j = 0; j < cols; j++)
+        {
+                Set(toAdd.At(i,j)+At(i,j), i, j);
+        }
+    }
+    return;
+}
+void Matrix::Subtract(Matrix & toSub)
+{
+    if (this->NumRows() != toSub.NumRows() || this->NumCols() != toSub.NumCols())
+    {
+        throw MATRIX_ERROR_MISMATCHED_SIZE;
+    }
+     uint rows = this->NumRows();
+    uint cols = this->NumCols();
+
+    for (uint i = 0; i < rows; i++)
+    {
+        for (uint j = 0; j < cols; j++)
+        {
+                Set(At(i,j)-toSub.At(i,j), i, j);
+        }
+    }
+    return;
+}
+
+void Matrix::Divide(double scalar)
+{
+    for (uint i = 0; i < _rows; i++)
+    {
+        for (uint j = 0; j < _cols; j++)
+        {
+                Set(At(i,j)/scalar, i, j);
+        }
+    }
+    return;
+}
+void Matrix::Multiply(double scalar)
+{
+    for (uint i = 0; i < _rows; i++)
+    {
+        for (uint j = 0; j < _cols; j++)
+        {
+                Set(At(i,j)*scalar, i, j);
+        }
+    }
+    return;
+}
 Matrix Matrix::Subtract(Matrix left, Matrix right)
 {
     if (left.NumRows() != right.NumRows() || left.NumCols() != right.NumCols())
@@ -365,6 +422,20 @@ double* Matrix::ToVector() const
 
 void Matrix::Normalize()
 {
+    double magnitude = Magnitude();
+    for( int i = 0; i < _rows; i++)
+        Set(At(i, 0)/magnitude, i, 0);
+}
+double Matrix::Magnitude()
+{
+    double magnitude = 0.0;
+    for( int i = 0; i < _rows; i++)
+        magnitude += At(i, 0)*At(i,0);
+    magnitude = sqrt(magnitude);
+    return magnitude;
+}
+void Matrix::Scale()
+{
     double maxVal = 0.0;
     for (uint i = 0; i < _rows; i++)
     {
@@ -394,7 +465,7 @@ void Matrix::SetColumn(Matrix &column, uint col)
     uint rows = column.NumRows();
     for (uint i = 0; i < rows; i++)
     {
-        double val = column[0][i];
+        double val = column[i][0];
         this->Set(val, i, col);
     }
 }
