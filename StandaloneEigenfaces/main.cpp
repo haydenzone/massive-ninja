@@ -3,7 +3,11 @@
 #include "matrix.h"
 #include "iostream"
 #include<dirent.h>
+#include<string>
+#include<vector>
 int eigenface_match( Image faces[], const int IMAGE_COUNT );
+typedef std::vector<std::string> strvec;
+typedef std::vector<std::string>::iterator strveciter;
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
@@ -11,35 +15,45 @@ int main(int argc, char *argv[])
     MainWindow w2;
     QImage m;
     int min_face_i;
-    const int IMAGE_COUNT = 5;
+    int IMAGE_COUNT;
+    Image mytest[100];
+    strvec image_files;
+    std::string dir_str = "/home/student/1905008/IP/faces94/female/training";
 
-    /*
     DIR *dir;
     struct dirent *ent;
-    if ((dir = opendir ("/home/student/1905008/IP/faces94/female/training")) != NULL) {
+    if ((dir = opendir (dir_str.c_str())) != NULL) {
       while ((ent = readdir (dir)) != NULL) {
           if(ent->d_name[0] == '.')
               continue;
-        printf ("%s\n", ent->d_name);
+        image_files.push_back(ent->d_name);
       }
       closedir (dir);
     } else {
       perror ("");
       return EXIT_FAILURE;
     }
-    return 0;
-*/
 
 
-    Image mytest[IMAGE_COUNT];
+
 
     //Input images
-    mytest[2] = Image("/home/student/1905008/IP/faces94/female/anpage/anpage.10.jpg");
-    mytest[1] = Image("/home/student/1905008/IP/faces94/female/asewil/asewil.14.jpg");
-    mytest[0] = Image("/home/student/1905008/IP/faces94/female/kaknig/kaknig.14.jpg");
-    mytest[3] = Image("/home/student/1905008/IP/faces94/female/lfso/lfso.10.jpg");
-    mytest[4] = Image("/home/student/1905008/IP/faces94/female/kaknig/kaknig.11.jpg");
-
+    IMAGE_COUNT = image_files.size();
+    int i = 0;
+    //Swap test image to the end
+    for( strveciter it = image_files.begin(); it != image_files.end(); it++)
+    {
+        if((*it) == "training.jpg")
+        {
+            image_files.erase(it);
+            image_files.push_back("training.jpg");
+            break;
+        }
+    }
+    for( strveciter it = image_files.begin(); it != image_files.end(); it++)
+    {
+        mytest[i++] = Image(dir_str+"/"+(*it));
+    }
 
 
     //Set display 1 to matching training face
