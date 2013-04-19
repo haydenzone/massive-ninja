@@ -14,9 +14,11 @@ CONFIG += qtimagelib
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    matrix.cpp
+    matrix.cpp \
+    facerecognitionapp.cpp
 
 HEADERS  += mainwindow.h \
-    matrix.h
+    matrix.h \
+    facerecognitionapp.h
 
 FORMS    += mainwindow.ui
