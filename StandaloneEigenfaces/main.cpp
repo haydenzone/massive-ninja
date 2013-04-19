@@ -10,8 +10,9 @@ int main(int argc, char *argv[])
     MainWindow w2;
     w.show();
     w2.show();
+    const int IMAGE_COUNT = 5;
 
-    Image mytest[5];
+    Image mytest[IMAGE_COUNT];
 
     //Input images
     mytest[2] = Image("/home/student/1905008/IP/faces94/female/anpage/anpage.10.jpg");
@@ -22,42 +23,42 @@ int main(int argc, char *argv[])
 
 
     //Allocate matrices to store images
-    Matrix * mat[5];
-    Matrix * mean_adjusted[5];
-    Matrix * eigenfaces[5];
-    Matrix * weights[5];
-    for( int i = 0; i < 5; i++)
+    Matrix * mat[IMAGE_COUNT];
+    Matrix * mean_adjusted[IMAGE_COUNT];
+    Matrix * eigenfaces[IMAGE_COUNT];
+    Matrix * weights[IMAGE_COUNT];
+    for( int i = 0; i < IMAGE_COUNT; i++)
     {
        mat[i] = new Matrix(mytest[i].Width() *mytest[i].Height(),1);
        mat[i]->SetFrom(mytest[i]);
        mean_adjusted[i] = new Matrix(mytest[i].Width() *mytest[i].Height(),1);
        eigenfaces[i] = new Matrix(mytest[i].Width() *mytest[i].Height(),1);
-       weights[i] = new Matrix(5,5);
+       weights[i] = new Matrix(IMAGE_COUNT,IMAGE_COUNT);
     }
 
     //Calculate the average face
     Matrix mean_face(mytest[0].Width()*mytest[1].Height(),1);
-    for(int i = 0; i < 4; i++)
+    for(int i = 0; i < IMAGE_COUNT-1; i++)
     {
         mean_face.Add(*mat[i]);
     }
-    mean_face.Divide(4.0);
-    Matrix A(mytest[0].Width()*mytest[1].Height(),4);
-    for(int i = 0; i < 5; i++)
+    mean_face.Divide(IMAGE_COUNT-1);
+    Matrix A(mytest[0].Width()*mytest[1].Height(),IMAGE_COUNT-1);
+    for(int i = 0; i < IMAGE_COUNT; i++)
     {
         mean_adjusted[i]->Add(*mat[i]);
         mean_adjusted[i]->Subtract(mean_face);
-        if(i < 4)
+        if(i < IMAGE_COUNT-1)
             A.SetColumn(*mean_adjusted[i], i);
     }
 
     Matrix At(Matrix::Transpose(A));
     Matrix L = Matrix::Multiply(At,A);
-    Matrix eig_vals(4, 1);
-    Matrix eig_vecs(4, 4);
-    Matrix U(mytest[0].Width()*mytest[1].Height(), 4);
+    Matrix eig_vals(IMAGE_COUNT-1, 1);
+    Matrix eig_vecs(IMAGE_COUNT-1, IMAGE_COUNT-1);
+    Matrix U(mytest[0].Width()*mytest[1].Height(), IMAGE_COUNT-1);
     L.eigen(eig_vecs, eig_vals);
-    for( int i = 0; i < 4; i++)
+    for( int i = 0; i < IMAGE_COUNT-1; i++)
     {
         Matrix temp(eig_vecs.GetCol(i));
         Matrix temp2(Matrix::Multiply(A, temp));
@@ -70,7 +71,7 @@ int main(int argc, char *argv[])
     Matrix Ut(Matrix::Transpose(U));
 
     //Calculate weights for each input image (including test)
-    for( int i = 0; i < 5; i++)
+    for( int i = 0; i < IMAGE_COUNT; i++)
     {
         Matrix temp = Matrix::Multiply(Ut,*mean_adjusted[i]);
         weights[i]->SetColumn(temp,0);
@@ -79,9 +80,9 @@ int main(int argc, char *argv[])
     //Find the face with the closest response
     double min_mag = 100000.0;
     int min_face_i = -1;
-    for(int i = 0; i < 4; i++)
+    for(int i = 0; i < IMAGE_COUNT-1; i++)
     {
-        weights[i]->Subtract(*weights[4]);
+        weights[i]->Subtract(*weights[IMAGE_COUNT-1]);
         double mag = weights[i]->Magnitude();
         if(mag < min_mag)
         {
@@ -94,7 +95,7 @@ int main(int argc, char *argv[])
     QImage m = mytest[min_face_i].ToQImage();
     w2.SetImage(m);
 
-    m = mytest[4].ToQImage();
+    m = mytest[IMAGE_COUNT-1].ToQImage();
     w.SetImage(m);
 
 
@@ -107,7 +108,7 @@ int main(int argc, char *argv[])
     */
 
     //Free matrices
-    for( int i = 0; i < 5; i++)
+    for( int i = 0; i < IMAGE_COUNT; i++)
     {
        delete mat[i];
         delete mean_adjusted[i];
