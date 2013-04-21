@@ -7,8 +7,9 @@
 #include<vector>
 #include <QString>
 #include <QFileDialog>
+#include <float.h>
 
-int eigenface_match( Image faces[], const int IMAGE_COUNT );
+int eigenface_match( Image faces[], const int IMAGE_COUNT,Image eigen_faces[], int e_count );
 
 typedef std::vector<std::string> strvec;
 typedef std::vector<std::string>::iterator strveciter;
@@ -26,6 +27,7 @@ bool FaceRecognitionApp::Menu_FacialRecognition_Eigenfaces(Image &image)
     int min_face_i;
     int IMAGE_COUNT;
     Image mytest[100];
+    Image eigen_faces[10];
     strvec image_files;
     std::string dir_str = QFileDialog::getExistingDirectory(NULL, "Please choose a directory", "/home/", QFileDialog::ShowDirsOnly).toStdString();
 
@@ -58,14 +60,16 @@ bool FaceRecognitionApp::Menu_FacialRecognition_Eigenfaces(Image &image)
 
 
     //Set display 1 to matching training face
-    min_face_i = eigenface_match(mytest, IMAGE_COUNT);
+    min_face_i = eigenface_match(mytest, IMAGE_COUNT, eigen_faces, 3);
+    for(int i = 0; i < 3; i++)
+        displayImage(eigen_faces[i], "Eigen Face");
 
     displayImage(mytest[min_face_i], "Matching face");
 
     return true;
 }
 
-int eigenface_match( Image faces[], const int IMAGE_COUNT )
+int eigenface_match( Image faces[], const int IMAGE_COUNT, Image eigen_faces[], int e_count )
 {
     //Allocate matrices to store images
     Matrix * face_matrices[IMAGE_COUNT];
@@ -78,7 +82,7 @@ int eigenface_match( Image faces[], const int IMAGE_COUNT )
         face_matrices[i]->SetFrom(faces[i]);
         mean_adjusted[i] = new Matrix(faces[i].Width() *faces[i].Height(),1);
         eigenfaces[i] = new Matrix(faces[i].Width() *faces[i].Height(),1);
-        weights[i] = new Matrix(IMAGE_COUNT,IMAGE_COUNT);
+        weights[i] = new Matrix((IMAGE_COUNT-1),1);
     }
 
     //Calculate the average face
@@ -110,8 +114,12 @@ int eigenface_match( Image faces[], const int IMAGE_COUNT )
         eigenfaces[i]->SetColumn(temp2 ,0);
         eigenfaces[i]->Normalize();
         U.SetColumn(*eigenfaces[i], i);
+
+        //Scale eigne faces to display
         eigenfaces[i]->Scale();
         eigenfaces[i]->Multiply(255.0);
+        if( i < e_count)
+            eigen_faces[i] = eigenfaces[i]->ToImage(faces[0].Height(),faces[0].Width());
     }
     Matrix Ut(Matrix::Transpose(U));
 
@@ -122,7 +130,7 @@ int eigenface_match( Image faces[], const int IMAGE_COUNT )
         weights[i]->SetColumn(temp,0);
     }
     //Find the face with the closest response
-    double min_mag = 100000.0;
+    double min_mag = DBL_MAX;
     int min_face_i = -1;
     for(int i = 0; i < IMAGE_COUNT-1; i++)
     {

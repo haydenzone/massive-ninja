@@ -277,7 +277,7 @@ void Matrix::Multiply(double scalar)
     {
         for (uint j = 0; j < _cols; j++)
         {
-                Set(At(i,j)*scalar, i, j);
+            Set(At(i,j)*scalar, i, j);
         }
     }
     return;
@@ -361,7 +361,7 @@ Matrix Matrix::Multiply(Matrix left, Matrix right)
     {
         for (uint j = 0; j < toReturn.NumCols(); j++)
         {
-            uint value = 0;
+            double value = 0;
             for (uint k = 0; k < m; k++)
             {
                 value += left.At(i, k) * right.At(k, j);
@@ -437,6 +437,7 @@ double Matrix::Magnitude()
 void Matrix::Scale()
 {
     double maxVal = 0.0;
+    double minVal =  100000000.0;
     for (uint i = 0; i < _rows; i++)
     {
         for (uint j = 0; j < _cols; j++)
@@ -444,6 +445,8 @@ void Matrix::Scale()
             double temp = this->At(i, j);
             if (temp > maxVal)
                 maxVal = temp;
+            if (temp < minVal)
+                minVal = temp;
         }
     }
 
@@ -452,7 +455,7 @@ void Matrix::Scale()
         for (uint j = 0; j < _cols; j++)
         {
             double temp = this->At(i, j);
-            this->Set(temp / maxVal, i, j);
+            this->Set((temp - minVal)/(maxVal-minVal), i, j);
         }
     }
 }
