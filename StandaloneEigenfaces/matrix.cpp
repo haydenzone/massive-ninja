@@ -1,16 +1,39 @@
+/***************************************************************************//**
+ * @file matrix.cpp
+ ******************************************************************************/
+
+
+
+/******************************************************************************
+ * Includes
+ ******************************************************************************/
 #include "matrix.h"
 #include <iostream>
 #include <math.h>
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_eigen.h>
 
+
+
+
+/***************************************************************************//**
+ * @par Description:
+ * Default Matrix constructor
+ ******************************************************************************/
 Matrix::Matrix()
 {
+    //set rows and columns to 0 and null the data
     _rows = _cols = 0;
     _data = NULL;
     _data1D = NULL;
 }
 
+
+
+/***************************************************************************//**
+ * @par Description:
+ * Matrix constructor with rows and columns
+ ******************************************************************************/
 Matrix::Matrix(uint rows, uint cols)
 {
     _rows = rows;
@@ -18,6 +41,8 @@ Matrix::Matrix(uint rows, uint cols)
 
     _data1D = new double[_rows * _cols];
     _data = new double*[_rows];
+
+    //Set rows and columns to 0.0
     for (uint row = 0; row < _rows; row++)
     {
         _data[row] = (_data1D + (row * _cols));  //new double[_cols];
@@ -29,6 +54,12 @@ Matrix::Matrix(uint rows, uint cols)
     }
 }
 
+
+
+/***************************************************************************//**
+ * @par Description:
+ * Matrix copy constructor
+ ******************************************************************************/
 Matrix::Matrix(const Matrix &toCopy)
 {
     _rows = toCopy.NumRows();
@@ -37,6 +68,7 @@ Matrix::Matrix(const Matrix &toCopy)
     _data1D = new double[_rows * _cols];
     _data = new double*[_rows];
 
+    //Copy each element to the nex matrix
     for (uint row = 0; row < _rows; row++)
     {
         _data[row] = (_data1D + (row * _cols));
@@ -47,35 +79,12 @@ Matrix::Matrix(const Matrix &toCopy)
     }
 }
 
-void Matrix::SetFrom(Image &image)
-{
-   //Clear allocated memory 
-   if(_rows != image.Height()*image.Width() && _cols != 1)
-   {
-      std::cout << "Matrix: incorrect matrix dimensions" << std::endl;
-      return;
-   }
 
-/*
-    _rows = image.Height() *image.Width();
-    _cols = 1;
 
-    _data1D = new double[_rows * _cols];
-    _data = new double*[_rows];
-    */
-
-    for (uint i = 0; i  < image.Height(); i++)
-    {
-        for (uint j = 0; j < image.Width(); j++)
-        {
-            _data[i*image.Width() + j] = _data1D + i*image.Width() + j;
-            Pixel pix = image[i][j];
-            uint val = (pix.Blue() + pix.Red() + pix.Green()) / 3.0;
-            this->Set(val,i*image.Width()+j,0);
-        }
-    }
-}
-
+/***************************************************************************//**
+ * @par Description:
+ * Matrix deconstructor
+ ******************************************************************************/
 Matrix::~Matrix()
 {
     for(int i = 0; i < _rows; i++)
@@ -98,9 +107,42 @@ Matrix::~Matrix()
 
 }
 
+
+/***************************************************************************//**
+ * @par Description:
+ * Convert an Image to a Matrix as a 1d column
+ ******************************************************************************/
+void Matrix::SetFrom(Image &image)
+{
+   //Clear allocated memory 
+   if(_rows != image.Height()*image.Width() && _cols != 1)
+   {
+      std::cout << "Matrix: incorrect matrix dimensions" << std::endl;
+      return;
+   }
+
+
+    for (uint i = 0; i  < image.Height(); i++)
+    {
+        for (uint j = 0; j < image.Width(); j++)
+        {
+            _data[i*image.Width() + j] = _data1D + i*image.Width() + j;
+            Pixel pix = image[i][j];
+            uint val = (pix.Blue() + pix.Red() + pix.Green()) / 3.0;
+            this->Set(val,i*image.Width()+j,0);
+        }
+    }
+}
+
+
+
+/***************************************************************************//**
+ * @par Description:
+ * Converts the matrix to an image with height and width dimensions
+ ******************************************************************************/
 Image Matrix::ToImage(int height, int width)
 {
-    Image toReturn = Image(height, width);
+   Image toReturn = Image(height, width);
    if(_cols != 1)
    {
       std::cout << "Matrix::ToImage: matrix must be a 1-d col vector" << std::endl;
@@ -124,6 +166,12 @@ Image Matrix::ToImage(int height, int width)
     return toReturn;
 }
 
+
+
+/***************************************************************************//**
+ * @par Description:
+ * Prints the matrix for debugging purposes
+ ******************************************************************************/
 void Matrix::Print()
 {
     for (uint row = 0; row < _rows; row++)
@@ -136,16 +184,33 @@ void Matrix::Print()
     }
 }
 
+
+
+/***************************************************************************//**
+ * @par Description:
+ * Gets the number of rows of the matrix
+ ******************************************************************************/
 uint Matrix::NumRows() const
 {
     return this->_rows;
 }
 
+
+/***************************************************************************//**
+ * @par Description:
+ * Gets the number of columns of the matrix
+ ******************************************************************************/
 uint Matrix::NumCols() const
 {
     return this->_cols;
 }
 
+
+
+/***************************************************************************//**
+ * @par Description:
+ * Returns a new matrix that is the row of this matrix
+ ******************************************************************************/
 Matrix Matrix::GetRow(uint row) const
 {
     if (row >= _rows)
@@ -163,6 +228,12 @@ Matrix Matrix::GetRow(uint row) const
     return toReturn;
 }
 
+
+
+/***************************************************************************//**
+ * @par Description:
+ * Returns a new matrix that is the specified columns of this matrix
+ ******************************************************************************/
 Matrix Matrix::Matrix::GetCol(uint col) const
 {
     if (col >= _cols)
@@ -180,6 +251,12 @@ Matrix Matrix::Matrix::GetCol(uint col) const
     return toReturn;
 }
 
+
+
+/***************************************************************************//**
+ * @par Description:
+ * Returns an element of the matrix
+ ******************************************************************************/
 double Matrix::At(uint i, uint j) const
 {
     if (i >= _rows || j >= _cols)
@@ -190,6 +267,12 @@ double Matrix::At(uint i, uint j) const
     return _data[i][j];
 }
 
+
+
+/***************************************************************************//**
+ * @par Description:
+ * Sets an element in the matrix
+ ******************************************************************************/
 void Matrix::Set(double value, uint i, uint j)
 {
     if (i >= _rows || j >= _cols)
@@ -201,6 +284,12 @@ void Matrix::Set(double value, uint i, uint j)
     _data[i][j] = value;
 }
 
+
+
+/***************************************************************************//**
+ * @par Description:
+ * Adds two matrices together and returns the result
+ ******************************************************************************/
 Matrix Matrix::Add(Matrix left, Matrix right)
 {
     if (left.NumRows() != right.NumRows() || left.NumCols() != right.NumCols())
@@ -223,54 +312,83 @@ Matrix Matrix::Add(Matrix left, Matrix right)
     }
     return toReturn;
 }
+
+
+
+/***************************************************************************//**
+ * @par Description:
+ * Adds a matrix to this matrix
+ ******************************************************************************/
 void Matrix::Add(Matrix & toAdd)
 {
     if (this->NumRows() != toAdd.NumRows() || this->NumCols() != toAdd.NumCols())
     {
         throw MATRIX_ERROR_MISMATCHED_SIZE;
     }
-     uint rows = this->NumRows();
+
+    uint rows = this->NumRows();
     uint cols = this->NumCols();
 
     for (uint i = 0; i < rows; i++)
     {
         for (uint j = 0; j < cols; j++)
         {
-                Set(toAdd.At(i,j)+At(i,j), i, j);
+            Set(toAdd.At(i,j)+At(i,j), i, j);
         }
     }
     return;
 }
+
+
+
+/***************************************************************************//**
+ * @par Description:
+ * Subtracts a matrix from this matrix
+ ******************************************************************************/
 void Matrix::Subtract(Matrix & toSub)
 {
     if (this->NumRows() != toSub.NumRows() || this->NumCols() != toSub.NumCols())
     {
         throw MATRIX_ERROR_MISMATCHED_SIZE;
     }
-     uint rows = this->NumRows();
+
+    uint rows = this->NumRows();
     uint cols = this->NumCols();
 
     for (uint i = 0; i < rows; i++)
     {
         for (uint j = 0; j < cols; j++)
         {
-                Set(At(i,j)-toSub.At(i,j), i, j);
+            Set(At(i,j)-toSub.At(i,j), i, j);
         }
     }
     return;
 }
 
+
+
+/***************************************************************************//**
+ * @par Description:
+ * Divides this matrix by a scalar
+ ******************************************************************************/
 void Matrix::Divide(double scalar)
 {
     for (uint i = 0; i < _rows; i++)
     {
         for (uint j = 0; j < _cols; j++)
         {
-                Set(At(i,j)/scalar, i, j);
+            Set(At(i,j)/scalar, i, j);
         }
     }
     return;
 }
+
+
+
+/***************************************************************************//**
+ * @par Description:
+ * Multiplies this matrix by a scalar
+ ******************************************************************************/
 void Matrix::Multiply(double scalar)
 {
     for (uint i = 0; i < _rows; i++)
@@ -282,6 +400,13 @@ void Matrix::Multiply(double scalar)
     }
     return;
 }
+
+
+
+/***************************************************************************//**
+ * @par Description:
+ * Subtracts two matricies and returns the result
+ ******************************************************************************/
 Matrix Matrix::Subtract(Matrix left, Matrix right)
 {
     if (left.NumRows() != right.NumRows() || left.NumCols() != right.NumCols())
@@ -306,6 +431,12 @@ Matrix Matrix::Subtract(Matrix left, Matrix right)
     return toReturn;
 }
 
+
+
+/***************************************************************************//**
+ * @par Description:
+ * Divides a matrix by a scalar and returns the result
+ ******************************************************************************/
 Matrix Matrix::Divide(Matrix matrix, double scalar)
 {
     uint rows = matrix.NumRows();
@@ -325,6 +456,12 @@ Matrix Matrix::Divide(Matrix matrix, double scalar)
     return toReturn;
 }
 
+
+
+/***************************************************************************//**
+ * @par Description:
+ * Multiplies a matrix by a scalar value and returns the result
+ ******************************************************************************/
 Matrix Matrix::Multiply(Matrix matrix, double scalar)
 {
     uint rows = matrix.NumRows();
@@ -344,6 +481,12 @@ Matrix Matrix::Multiply(Matrix matrix, double scalar)
     return toReturn;
 }
 
+
+
+/***************************************************************************//**
+ * @par Description:
+ * Multiplies two matrices and returns the result
+ ******************************************************************************/
 Matrix Matrix::Multiply(Matrix left, Matrix right)
 {
     if (left.NumCols() != right.NumRows())
@@ -374,6 +517,12 @@ Matrix Matrix::Multiply(Matrix left, Matrix right)
     return toReturn;
 }
 
+
+
+/***************************************************************************//**
+ * @par Description:
+ * Transposes a matrix and returns the result
+ ******************************************************************************/
 Matrix Matrix::Transpose(Matrix matrix)
 {
     uint rows = matrix.NumCols();
@@ -392,6 +541,12 @@ Matrix Matrix::Transpose(Matrix matrix)
     return toReturn;
 }
 
+
+
+/***************************************************************************//**
+ * @par Description:
+ * Overloads the [] operator to return a double* which is the specified row
+ ******************************************************************************/
 double* Matrix::operator [](const uint i)
 {
     if (i >= _rows)
@@ -402,11 +557,23 @@ double* Matrix::operator [](const uint i)
     return _data[i];
 }
 
+
+
+/***************************************************************************//**
+ * @par Description:
+ * Overloads the = operator to copy a matrix and returns the result
+ ******************************************************************************/
 Matrix Matrix::operator =(const Matrix& toCopy)
 {
     return Matrix(toCopy);
 }
 
+
+
+/***************************************************************************//**
+ * @par Description:
+ * Concatanates the rows together of this matrix and returns the result
+ ******************************************************************************/
 double* Matrix::ToVector() const
 {
     uint totalSize = _rows * _cols;
@@ -420,12 +587,25 @@ double* Matrix::ToVector() const
     return toReturn;
 }
 
+
+
+/***************************************************************************//**
+ * @par Description:
+ * Normalizes the matrix
+ ******************************************************************************/
 void Matrix::Normalize()
 {
     double magnitude = Magnitude();
     for( int i = 0; i < _rows; i++)
         Set(At(i, 0)/magnitude, i, 0);
 }
+
+
+
+/***************************************************************************//**
+ * @par Description:
+ * Returns the magnitude of the matrix
+ ******************************************************************************/
 double Matrix::Magnitude()
 {
     double magnitude = 0.0;
@@ -434,6 +614,13 @@ double Matrix::Magnitude()
     magnitude = sqrt(magnitude);
     return magnitude;
 }
+
+
+
+/***************************************************************************//**
+ * @par Description:
+ * Scales each element in the matrix from 0 to 1
+ ******************************************************************************/
 void Matrix::Scale()
 {
     double maxVal = 0.0;
@@ -461,6 +648,11 @@ void Matrix::Scale()
 }
 
 
+
+/***************************************************************************//**
+ * @par Description:
+ * Sets a column of the matrix
+ ******************************************************************************/
 void Matrix::SetColumn(Matrix &column, uint col)
 {
     if (column.NumCols() != 1)
@@ -473,6 +665,12 @@ void Matrix::SetColumn(Matrix &column, uint col)
     }
 }
 
+
+
+/***************************************************************************//**
+ * @par Description:
+ * Gets the eigen vectors and eigen values of this matrix
+ ******************************************************************************/
 void Matrix::eigen(Matrix & eigen_vectors, Matrix & eigen_values)
 {
    if(!(eigen_vectors.NumCols() == _rows && eigen_vectors.NumRows() == _rows))
