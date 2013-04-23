@@ -1,7 +1,13 @@
+/***************************************************************************//**
+ * @file facerecognitionapp.cpp
+ ******************************************************************************/
+
+/******************************************************************************
+ * Includes
+ ******************************************************************************/
 #include "facerecognitionapp.h"
 #include "matrix.h"
 #include "iostream"
-
 #include<dirent.h>
 #include<string>
 #include<vector>
@@ -9,62 +15,86 @@
 #include <QFileDialog>
 #include <float.h>
 
-int eigenface_match( Image faces[], const int IMAGE_COUNT,Image eigen_faces[], int e_count );
-
+/******************************************************************************
+ * Typedefs
+ ******************************************************************************/
 typedef std::vector<std::string> strvec;
 typedef std::vector<std::string>::iterator strveciter;
 
+/******************************************************************************
+ * Prototypes
+ ******************************************************************************/
+int eigenface_match( Image faces[], const int IMAGE_COUNT,Image eigen_faces[], int e_count );
+bool get_files_dir(std::string dir_str, strvec & image_files);
+
+
+/***************************************************************************//**
+ * @par Description:
+ * App constructor
+ ******************************************************************************/
 FaceRecognitionApp::FaceRecognitionApp(QObject *parent) :
     QObject(parent)
 {
 }
 
-
+/***************************************************************************//**
+ * @author Hayden Waisanen
+ *
+ * @par Description:
+ * This function adds facial recognition with eigenfaces to the QtImageLib
+ * application. The user is first prompted for a directory containing a
+ * set of images to be used for training. Eigenfaces are constructed and
+ * used to find the closest matching training face to the image that is currently
+ * open. All images must have the same dimensions.
+ *
+ * @param[in] image
+ *
+ * @returns bool
+ *
+ ******************************************************************************/
 bool FaceRecognitionApp::Menu_FacialRecognition_Eigenfaces(Image &image)
 {
-    //QFileDialog::getExistingDirectory("Please choose a directory", ".", QFileDialog::DirectoryOnly);
+    int min_face_i;            //Face image with the closest match
+    int IMAGE_COUNT;           //Number of images used for training
+    Image training_images[100];//Training images for eigenfaces
+    Image eigen_faces[10];     //Used to display a sampling of eigenfaces
+    strvec image_files;        //Image files in selected directory
+    std::string dir_str =      //Path to directory containing training images
+            QFileDialog::getExistingDirectory(NULL,
+                        "Please choose a directory",
+                        "/home/",
+                        QFileDialog::ShowDirsOnly).toStdString();
 
-    int min_face_i;
-    int IMAGE_COUNT;
-    Image mytest[100];
-    Image eigen_faces[10];
-    strvec image_files;
-    std::string dir_str = QFileDialog::getExistingDirectory(NULL, "Please choose a directory", "/home/", QFileDialog::ShowDirsOnly).toStdString();
-
-    DIR *dir;
-    struct dirent *ent;
-    if ((dir = opendir (dir_str.c_str())) != NULL) {
-      while ((ent = readdir (dir)) != NULL) {
-          if(ent->d_name[0] == '.')
-              continue;
-        image_files.push_back(ent->d_name);
-      }
-      closedir (dir);
-    } else {
-      perror ("");
-      return false;
-    }
+    //Get the files in this directroy
+    if(!get_files_dir( dir_str, image_files))
+        return false;
 
     //Input images
     IMAGE_COUNT = image_files.size();
+    if(IMAGE_COUNT > 100)
+    {
+        std::cout << "Training set too large" << std::endl;
+        return false;
+    }
     int i = 0;
-
     for( strveciter it = image_files.begin(); it != image_files.end(); it++)
     {
-        mytest[i++] = Image(dir_str+"/"+(*it));
+        training_images[i++] = Image(dir_str+"/"+(*it));
     }
 
-    //Put test image in test array
-    mytest[i] = image;
+    //Place test image file at last index
+    training_images[i] = image;
     IMAGE_COUNT++;
 
+    //Using eigenfaces calculate a matching face
+    min_face_i = eigenface_match(training_images, IMAGE_COUNT, eigen_faces, 3);
 
-    //Set display 1 to matching training face
-    min_face_i = eigenface_match(mytest, IMAGE_COUNT, eigen_faces, 3);
+    //Display a sampling of eigenfaces
     for(int i = 0; i < 3; i++)
         displayImage(eigen_faces[i], "Eigen Face");
 
-    displayImage(mytest[min_face_i], "Matching face");
+    //Display matching training face
+    displayImage(training_images[min_face_i], "Matching face");
 
     return true;
 }
@@ -153,4 +183,37 @@ int eigenface_match( Image faces[], const int IMAGE_COUNT, Image eigen_faces[], 
     }
 
     return min_face_i;
+}
+/***************************************************************************//**
+ * @author Hayden Waisanen
+ *
+ * @par Description:
+ * Get files contained in directory
+ * Source: http://stackoverflow.com/questions/612097/how-can-i-get-a-list-of-files-in-a-directory-using-c-or-c
+ *
+ * @param[in] image
+ *
+ * @returns bool
+ *
+ ******************************************************************************/
+bool get_files_dir(std::string dir_str, strvec & image_files)
+{
+    DIR *dir;
+    struct dirent *ent;
+    if ((dir = opendir (dir_str.c_str())) != NULL)
+    {
+        while ((ent = readdir (dir)) != NULL)
+        {
+            if(ent->d_name[0] == '.')
+                continue;
+            image_files.push_back(ent->d_name);
+        }
+        closedir (dir);
+    }
+    else
+    {
+        perror ("");
+        return false;
+    }
+    return true;
 }
