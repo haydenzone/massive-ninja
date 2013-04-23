@@ -17,6 +17,7 @@
 
 
 /***************************************************************************//**
+ * @author David Jarman
  * @par Description:
  * Default Matrix constructor
  ******************************************************************************/
@@ -31,6 +32,7 @@ Matrix::Matrix()
 
 
 /***************************************************************************//**
+ * @author David Jarman
  * @par Description:
  * Matrix constructor with rows and columns
  ******************************************************************************/
@@ -57,6 +59,7 @@ Matrix::Matrix(uint rows, uint cols)
 
 
 /***************************************************************************//**
+ * @author David Jarman
  * @par Description:
  * Matrix copy constructor
  ******************************************************************************/
@@ -82,6 +85,7 @@ Matrix::Matrix(const Matrix &toCopy)
 
 
 /***************************************************************************//**
+ * @author David Jarman
  * @par Description:
  * Matrix deconstructor
  ******************************************************************************/
@@ -109,6 +113,7 @@ Matrix::~Matrix()
 
 
 /***************************************************************************//**
+ * @author David Jarman
  * @par Description:
  * Convert an Image to a Matrix as a 1d column
  ******************************************************************************/
@@ -137,6 +142,7 @@ void Matrix::SetFrom(Image &image)
 
 
 /***************************************************************************//**
+ * @author David Jarman
  * @par Description:
  * Converts the matrix to an image with height and width dimensions
  ******************************************************************************/
@@ -169,6 +175,7 @@ Image Matrix::ToImage(int height, int width)
 
 
 /***************************************************************************//**
+ * @author David Jarman
  * @par Description:
  * Prints the matrix for debugging purposes
  ******************************************************************************/
@@ -187,6 +194,7 @@ void Matrix::Print()
 
 
 /***************************************************************************//**
+ * @author David Jarman
  * @par Description:
  * Gets the number of rows of the matrix
  ******************************************************************************/
@@ -197,6 +205,7 @@ uint Matrix::NumRows() const
 
 
 /***************************************************************************//**
+ * @author David Jarman
  * @par Description:
  * Gets the number of columns of the matrix
  ******************************************************************************/
@@ -208,6 +217,7 @@ uint Matrix::NumCols() const
 
 
 /***************************************************************************//**
+ * @author David Jarman
  * @par Description:
  * Returns a new matrix that is the row of this matrix
  ******************************************************************************/
@@ -231,6 +241,7 @@ Matrix Matrix::GetRow(uint row) const
 
 
 /***************************************************************************//**
+ * @author David Jarman
  * @par Description:
  * Returns a new matrix that is the specified columns of this matrix
  ******************************************************************************/
@@ -254,6 +265,7 @@ Matrix Matrix::Matrix::GetCol(uint col) const
 
 
 /***************************************************************************//**
+ * @author David Jarman
  * @par Description:
  * Returns an element of the matrix
  ******************************************************************************/
@@ -270,6 +282,7 @@ double Matrix::At(uint i, uint j) const
 
 
 /***************************************************************************//**
+ * @author David Jarman
  * @par Description:
  * Sets an element in the matrix
  ******************************************************************************/
@@ -287,6 +300,7 @@ void Matrix::Set(double value, uint i, uint j)
 
 
 /***************************************************************************//**
+ * @author David Jarman
  * @par Description:
  * Adds two matrices together and returns the result
  ******************************************************************************/
@@ -316,6 +330,7 @@ Matrix Matrix::Add(Matrix left, Matrix right)
 
 
 /***************************************************************************//**
+ * @author David Jarman
  * @par Description:
  * Adds a matrix to this matrix
  ******************************************************************************/
@@ -342,6 +357,7 @@ void Matrix::Add(Matrix & toAdd)
 
 
 /***************************************************************************//**
+ * @author David Jarman
  * @par Description:
  * Subtracts a matrix from this matrix
  ******************************************************************************/
@@ -368,6 +384,7 @@ void Matrix::Subtract(Matrix & toSub)
 
 
 /***************************************************************************//**
+ * @author David Jarman
  * @par Description:
  * Divides this matrix by a scalar
  ******************************************************************************/
@@ -386,6 +403,7 @@ void Matrix::Divide(double scalar)
 
 
 /***************************************************************************//**
+ * @author David Jarman
  * @par Description:
  * Multiplies this matrix by a scalar
  ******************************************************************************/
@@ -404,6 +422,7 @@ void Matrix::Multiply(double scalar)
 
 
 /***************************************************************************//**
+ * @author David Jarman
  * @par Description:
  * Subtracts two matricies and returns the result
  ******************************************************************************/
@@ -434,6 +453,7 @@ Matrix Matrix::Subtract(Matrix left, Matrix right)
 
 
 /***************************************************************************//**
+ * @author David Jarman
  * @par Description:
  * Divides a matrix by a scalar and returns the result
  ******************************************************************************/
@@ -459,6 +479,7 @@ Matrix Matrix::Divide(Matrix matrix, double scalar)
 
 
 /***************************************************************************//**
+ * @author David Jarman
  * @par Description:
  * Multiplies a matrix by a scalar value and returns the result
  ******************************************************************************/
@@ -484,6 +505,7 @@ Matrix Matrix::Multiply(Matrix matrix, double scalar)
 
 
 /***************************************************************************//**
+ * @author David Jarman
  * @par Description:
  * Multiplies two matrices and returns the result
  ******************************************************************************/
@@ -520,6 +542,7 @@ Matrix Matrix::Multiply(Matrix left, Matrix right)
 
 
 /***************************************************************************//**
+ * @author David Jarman
  * @par Description:
  * Transposes a matrix and returns the result
  ******************************************************************************/
@@ -544,6 +567,7 @@ Matrix Matrix::Transpose(Matrix matrix)
 
 
 /***************************************************************************//**
+ * @author David Jarman
  * @par Description:
  * Overloads the [] operator to return a double* which is the specified row
  ******************************************************************************/
@@ -560,6 +584,7 @@ double* Matrix::operator [](const uint i)
 
 
 /***************************************************************************//**
+ * @author David Jarman
  * @par Description:
  * Overloads the = operator to copy a matrix and returns the result
  ******************************************************************************/
@@ -571,6 +596,7 @@ Matrix Matrix::operator =(const Matrix& toCopy)
 
 
 /***************************************************************************//**
+ * @author David Jarman
  * @par Description:
  * Concatanates the rows together of this matrix and returns the result
  ******************************************************************************/
@@ -590,6 +616,7 @@ double* Matrix::ToVector() const
 
 
 /***************************************************************************//**
+ * @author David Jarman
  * @par Description:
  * Normalizes the matrix
  ******************************************************************************/
@@ -603,6 +630,7 @@ void Matrix::Normalize()
 
 
 /***************************************************************************//**
+ * @author David Jarman
  * @par Description:
  * Returns the magnitude of the matrix
  ******************************************************************************/
@@ -618,6 +646,7 @@ double Matrix::Magnitude()
 
 
 /***************************************************************************//**
+ * @author David Jarman
  * @par Description:
  * Scales each element in the matrix from 0 to 1
  ******************************************************************************/
@@ -650,6 +679,7 @@ void Matrix::Scale()
 
 
 /***************************************************************************//**
+ * @author David Jarman
  * @par Description:
  * Sets a column of the matrix
  ******************************************************************************/
@@ -668,6 +698,7 @@ void Matrix::SetColumn(Matrix &column, uint col)
 
 
 /***************************************************************************//**
+ * @author Hayden Waisanen
  * @par Description:
  * Gets the eigen vectors and eigen values of this matrix
  ******************************************************************************/
